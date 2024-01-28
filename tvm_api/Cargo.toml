@@ -1,24 +1,30 @@
 [package]
-authors = [ 'Aaron Gallagher <_@habnab.it>', 'Connie Hilarides <connorcpu@live.com>', 'Denis K. <denis.k@tonlabs.io>', 'Alexey Vavilin <alexey.v@tonlabs.io', 'Sergei Blinov <sergei.b@gosh.sh>' ]
-description = 'Minimal wrappers for TVM serialization using TL-schema'
-edition = '2021'
-name = 'tvm_api'
+authors = [
+    "Aaron Gallagher <_@habnab.it>",
+    "Connie Hilarides <connorcpu@live.com>",
+    "Denis K. <denis.k@tonlabs.io>",
+    "Alexey Vavilin <alexey.v@tonlabs.io",
+    "Sergei Blinov <sergei.b@gosh.sh>",
+]
+description = "Minimal wrappers for TVM serialization using TL-schema"
+edition = "2021"
+name = "tvm_api"
 rust-version = "1.75.0"
-version = '0.4.0'
+version = "0.4.0"
 
 [dependencies]
-byteorder = '1.4'
-extfmt = '0.1'
-failure = '0.1'
-hex = '0.4'
-lazy_static = '1.4'
-ordered-float = '2.8'
-secstr = '0.4'
-serde = '1.0'
-serde_derive = '1.0'
-tvm_block = { git = 'https://github.com/tvmlabs/tvm-block.git', branch = "main" }
-tvm_types = { git = 'https://github.com/tvmlabs/tvm-types.git', branch = "main" }
+byteorder = "1.5.0"
+extfmt = "0.1.1"
+failure = "0.1.8"
+hex = "0.4.3"
+lazy_static = "1.4.0"
+ordered-float = "4.2.0"
+secstr = "0.5.1"
+serde = "1.0.196"
+serde_derive = "1.0.196"
+tvm_block = { git = "https://github.com/tvmlabs/tvm-block", branch = "main" }
+tvm_types = { git = "https://github.com/tvmlabs/tvm-types", branch = "main" }
 
 [build-dependencies]
-serde_json = '1.0.52'
-tvm_tl_codegen = { path = '../tvm_tl_codegen' }
+serde_json = "1.0.112"
+tvm_tl_codegen = { path = "../tvm_tl_codegen" }
