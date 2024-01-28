@@ -1,9 +1,10 @@
 [package]
-authors = [ 'Aaron Gallagher <_@habnab.it>', 'Connie Hilarides <connorcpu@live.com>', 'Denis K. <denis.k@tonlabs.io>', 'Alexey Vavilin <alexey.v@tonlabs.io' ]
-description = 'Minimal wrappers for TON serialization using TL-schema'
+authors = [ 'Aaron Gallagher <_@habnab.it>', 'Connie Hilarides <connorcpu@live.com>', 'Denis K. <denis.k@tonlabs.io>', 'Alexey Vavilin <alexey.v@tonlabs.io', 'Sergei Blinov <sergei.b@gosh.sh>' ]
+description = 'Minimal wrappers for TVM serialization using TL-schema'
 edition = '2021'
 name = 'tvm_api'
-version = '0.3.55'
+rust-version = "1.75.0"
+version = '0.4.0'
 
 [dependencies]
 byteorder = '1.4'

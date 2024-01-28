@@ -45,7 +45,9 @@ pub mod secure;
 pub mod ton;
 mod ton_prelude;
 
-include!("../../common/src/info.rs");
+pub fn build_commit() -> Option<&'static str> {
+    std::option_env!("BUILD_GIT_COMMIT")
+}
 
 /// Struct representing TL constructor number (CRC32 calculated from constructor definition string)
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
