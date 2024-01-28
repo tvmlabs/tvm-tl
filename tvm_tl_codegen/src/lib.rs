@@ -1894,11 +1894,7 @@ impl Constructors<TypeIR, FieldIR> {
                 if field.ty.is_flags() {
                     continue;
                 }
-                map.entry(&field.name)
-                    .or_default()
-                    .entry(&field.ty)
-                    .or_default()
-                    .insert(cons);
+                map.entry(&field.name).or_default().entry(&field.ty).or_default().insert(cons);
             }
         }
         map
