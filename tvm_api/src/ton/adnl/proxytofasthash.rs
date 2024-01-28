@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Default, Clone, PartialEq)]
 #[doc = "TL-derived from `adnl.proxyToFastHash`\n\n```text\nadnl.proxyToFastHash ip:int port:int date:int data_hash:int256 shared_secret:int256 = adnl.ProxyTo;\n```\n"]
 pub struct ProxyToFastHash {
@@ -13,14 +14,9 @@ impl crate::BareSerialize for ProxyToFastHash {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0xddbdf85e)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let ProxyToFastHash {
-            ip,
-            port,
-            date,
-            data_hash,
-            shared_secret,
-        } = self;
+        let ProxyToFastHash { ip, port, date, data_hash, shared_secret } = self;
         _ser.write_bare::<crate::ton::int>(ip)?;
         _ser.write_bare::<crate::ton::int>(port)?;
         _ser.write_bare::<crate::ton::int>(date)?;
@@ -37,18 +33,13 @@ impl crate::BareDeserialize for ProxyToFastHash {
             let date = _de.read_bare::<crate::ton::int>()?;
             let data_hash = _de.read_bare::<crate::ton::int256>()?;
             let shared_secret = _de.read_bare::<crate::ton::int256>()?;
-            Ok(Self {
-                ip,
-                port,
-                date,
-                data_hash,
-                shared_secret,
-            })
+            Ok(Self { ip, port, date, data_hash, shared_secret })
         }
     }
 }
 impl crate::IntoBoxed for ProxyToFastHash {
     type Boxed = crate::ton::adnl::ProxyTo;
+
     fn into_boxed(self) -> crate::ton::adnl::ProxyTo {
         crate::ton::adnl::ProxyTo::Adnl_ProxyToFastHash(self)
     }

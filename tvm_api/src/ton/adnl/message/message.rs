@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Default, Clone, PartialEq)]
 #[doc = "TL-derived from `adnl.message.answer`\n\n```text\nadnl.message.answer query_id:int256 answer:bytes = adnl.Message;\n```\n"]
 pub struct Answer {
@@ -10,6 +11,7 @@ impl crate::BareSerialize for Answer {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x0fac8416)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
         let Answer { query_id, answer } = self;
         _ser.write_bare::<crate::ton::int256>(query_id)?;
@@ -28,6 +30,7 @@ impl crate::BareDeserialize for Answer {
 }
 impl crate::IntoBoxed for Answer {
     type Boxed = crate::ton::adnl::Message;
+
     fn into_boxed(self) -> crate::ton::adnl::Message {
         crate::ton::adnl::Message::Adnl_Message_Answer(self)
     }
@@ -44,12 +47,9 @@ impl crate::BareSerialize for ConfirmChannel {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x60dd1d69)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let ConfirmChannel {
-            key,
-            peer_key,
-            date,
-        } = self;
+        let ConfirmChannel { key, peer_key, date } = self;
         _ser.write_bare::<crate::ton::int256>(key)?;
         _ser.write_bare::<crate::ton::int256>(peer_key)?;
         _ser.write_bare::<crate::ton::int>(date)?;
@@ -62,16 +62,13 @@ impl crate::BareDeserialize for ConfirmChannel {
             let key = _de.read_bare::<crate::ton::int256>()?;
             let peer_key = _de.read_bare::<crate::ton::int256>()?;
             let date = _de.read_bare::<crate::ton::int>()?;
-            Ok(Self {
-                key,
-                peer_key,
-                date,
-            })
+            Ok(Self { key, peer_key, date })
         }
     }
 }
 impl crate::IntoBoxed for ConfirmChannel {
     type Boxed = crate::ton::adnl::Message;
+
     fn into_boxed(self) -> crate::ton::adnl::Message {
         crate::ton::adnl::Message::Adnl_Message_ConfirmChannel(self)
     }
@@ -87,6 +84,7 @@ impl crate::BareSerialize for CreateChannel {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0xe673c3bb)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
         let CreateChannel { key, date } = self;
         _ser.write_bare::<crate::ton::int256>(key)?;
@@ -105,6 +103,7 @@ impl crate::BareDeserialize for CreateChannel {
 }
 impl crate::IntoBoxed for CreateChannel {
     type Boxed = crate::ton::adnl::Message;
+
     fn into_boxed(self) -> crate::ton::adnl::Message {
         crate::ton::adnl::Message::Adnl_Message_CreateChannel(self)
     }
@@ -119,6 +118,7 @@ impl crate::BareSerialize for Custom {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x204818f5)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
         let Custom { data } = self;
         _ser.write_bare::<crate::ton::bytes>(data)?;
@@ -135,6 +135,7 @@ impl crate::BareDeserialize for Custom {
 }
 impl crate::IntoBoxed for Custom {
     type Boxed = crate::ton::adnl::Message;
+
     fn into_boxed(self) -> crate::ton::adnl::Message {
         crate::ton::adnl::Message::Adnl_Message_Custom(self)
     }
@@ -152,13 +153,9 @@ impl crate::BareSerialize for Part {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0xfd452d39)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let Part {
-            hash,
-            total_size,
-            offset,
-            data,
-        } = self;
+        let Part { hash, total_size, offset, data } = self;
         _ser.write_bare::<crate::ton::int256>(hash)?;
         _ser.write_bare::<crate::ton::int>(total_size)?;
         _ser.write_bare::<crate::ton::int>(offset)?;
@@ -173,17 +170,13 @@ impl crate::BareDeserialize for Part {
             let total_size = _de.read_bare::<crate::ton::int>()?;
             let offset = _de.read_bare::<crate::ton::int>()?;
             let data = _de.read_bare::<crate::ton::bytes>()?;
-            Ok(Self {
-                hash,
-                total_size,
-                offset,
-                data,
-            })
+            Ok(Self { hash, total_size, offset, data })
         }
     }
 }
 impl crate::IntoBoxed for Part {
     type Boxed = crate::ton::adnl::Message;
+
     fn into_boxed(self) -> crate::ton::adnl::Message {
         crate::ton::adnl::Message::Adnl_Message_Part(self)
     }
@@ -199,6 +192,7 @@ impl crate::BareSerialize for Query {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0xb48bf97a)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
         let Query { query_id, query } = self;
         _ser.write_bare::<crate::ton::int256>(query_id)?;
@@ -217,6 +211,7 @@ impl crate::BareDeserialize for Query {
 }
 impl crate::IntoBoxed for Query {
     type Boxed = crate::ton::adnl::Message;
+
     fn into_boxed(self) -> crate::ton::adnl::Message {
         crate::ton::adnl::Message::Adnl_Message_Query(self)
     }
@@ -231,6 +226,7 @@ impl crate::BareSerialize for Reinit {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x10c20520)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
         let Reinit { date } = self;
         _ser.write_bare::<crate::ton::int>(date)?;
@@ -247,6 +243,7 @@ impl crate::BareDeserialize for Reinit {
 }
 impl crate::IntoBoxed for Reinit {
     type Boxed = crate::ton::adnl::Message;
+
     fn into_boxed(self) -> crate::ton::adnl::Message {
         crate::ton::adnl::Message::Adnl_Message_Reinit(self)
     }

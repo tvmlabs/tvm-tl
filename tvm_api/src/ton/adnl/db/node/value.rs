@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Default, Clone, PartialEq)]
 #[doc = "TL-derived from `adnl.db.node.value`\n\n```text\nadnl.db.node.value date:int id:PublicKey addr_list:adnl.addressList priority_addr_list:adnl.addressList = adnl.db.node.Value;\n```\n"]
 pub struct Value {
@@ -12,13 +13,9 @@ impl crate::BareSerialize for Value {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x545d2707)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let Value {
-            date,
-            id,
-            addr_list,
-            priority_addr_list,
-        } = self;
+        let Value { date, id, addr_list, priority_addr_list } = self;
         _ser.write_bare::<crate::ton::int>(date)?;
         _ser.write_boxed::<crate::ton::PublicKey>(id)?;
         _ser.write_bare::<crate::ton::adnl::addresslist::AddressList>(addr_list)?;
@@ -34,17 +31,13 @@ impl crate::BareDeserialize for Value {
             let addr_list = _de.read_bare::<crate::ton::adnl::addresslist::AddressList>()?;
             let priority_addr_list =
                 _de.read_bare::<crate::ton::adnl::addresslist::AddressList>()?;
-            Ok(Self {
-                date,
-                id,
-                addr_list,
-                priority_addr_list,
-            })
+            Ok(Self { date, id, addr_list, priority_addr_list })
         }
     }
 }
 impl crate::IntoBoxed for Value {
     type Boxed = crate::ton::adnl::db::node::Value;
+
     fn into_boxed(self) -> crate::ton::adnl::db::node::Value {
         crate::ton::adnl::db::node::Value::Adnl_Db_Node_Value(self)
     }

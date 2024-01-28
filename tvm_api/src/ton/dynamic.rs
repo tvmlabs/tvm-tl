@@ -1651,8 +1651,7 @@ fn make_deserializers() -> ::std::vec::Vec<crate::DynamicDeserializer> {
         crate::DynamicDeserializer::from::<
             crate::ton::rpc::engine::validator::AddValidatorAdnlAddress,
         >(
-            crate::ConstructorNumber(0xdacba682),
-            "rpc.engine.validator.addValidatorAdnlAddress",
+            crate::ConstructorNumber(0xdacba682), "rpc.engine.validator.addValidatorAdnlAddress"
         ),
         crate::DynamicDeserializer::from::<crate::ton::rpc::engine::validator::AddValidatorBlsKey>(
             crate::ConstructorNumber(0x4a8aa32c),
@@ -1661,8 +1660,7 @@ fn make_deserializers() -> ::std::vec::Vec<crate::DynamicDeserializer> {
         crate::DynamicDeserializer::from::<
             crate::ton::rpc::engine::validator::AddValidatorPermanentKey,
         >(
-            crate::ConstructorNumber(0x92150578),
-            "rpc.engine.validator.addValidatorPermanentKey",
+            crate::ConstructorNumber(0x92150578), "rpc.engine.validator.addValidatorPermanentKey"
         ),
         crate::DynamicDeserializer::from::<crate::ton::rpc::engine::validator::AddValidatorTempKey>(
             crate::ConstructorNumber(0x8d336f32),
@@ -1671,8 +1669,7 @@ fn make_deserializers() -> ::std::vec::Vec<crate::DynamicDeserializer> {
         crate::DynamicDeserializer::from::<
             crate::ton::rpc::engine::validator::ChangeFullNodeAdnlAddress,
         >(
-            crate::ConstructorNumber(0xbec6c985),
-            "rpc.engine.validator.changeFullNodeAdnlAddress",
+            crate::ConstructorNumber(0xbec6c985), "rpc.engine.validator.changeFullNodeAdnlAddress"
         ),
         crate::DynamicDeserializer::from::<crate::ton::rpc::engine::validator::CheckDhtServers>(
             crate::ConstructorNumber(0xd1e420ca),
@@ -1713,14 +1710,12 @@ fn make_deserializers() -> ::std::vec::Vec<crate::DynamicDeserializer> {
         crate::DynamicDeserializer::from::<
             crate::ton::rpc::engine::validator::DelValidatorAdnlAddress,
         >(
-            crate::ConstructorNumber(0xf708435a),
-            "rpc.engine.validator.delValidatorAdnlAddress",
+            crate::ConstructorNumber(0xf708435a), "rpc.engine.validator.delValidatorAdnlAddress"
         ),
         crate::DynamicDeserializer::from::<
             crate::ton::rpc::engine::validator::DelValidatorPermanentKey,
         >(
-            crate::ConstructorNumber(0x174ac8fa),
-            "rpc.engine.validator.delValidatorPermanentKey",
+            crate::ConstructorNumber(0x174ac8fa), "rpc.engine.validator.delValidatorPermanentKey"
         ),
         crate::DynamicDeserializer::from::<crate::ton::rpc::engine::validator::DelValidatorTempKey>(
             crate::ConstructorNumber(0xa0e6e0d1),
@@ -2089,8 +2084,7 @@ fn make_deserializers() -> ::std::vec::Vec<crate::DynamicDeserializer> {
         crate::DynamicDeserializer::from::<
             crate::ton::rpc::ton_node::DownloadPersistentMsgQueueSlice,
         >(
-            crate::ConstructorNumber(0x32fb50b1),
-            "rpc.tonNode.downloadPersistentMsgQueueSlice",
+            crate::ConstructorNumber(0x32fb50b1), "rpc.tonNode.downloadPersistentMsgQueueSlice"
         ),
         crate::DynamicDeserializer::from::<crate::ton::rpc::ton_node::DownloadPersistentState>(
             crate::ConstructorNumber(0x7f99e3b8),

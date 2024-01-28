@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Default, Clone, PartialEq)]
 #[doc = "TL-derived from `overlay.broadcast`\n\n```text\noverlay.broadcast src:PublicKey certificate:overlay.Certificate flags:int data:bytes date:int signature:bytes = overlay.Broadcast;\n```\n"]
 pub struct Broadcast {
@@ -19,15 +20,9 @@ impl crate::BareSerialize for Broadcast {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0xb15a2b6b)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let Broadcast {
-            src,
-            certificate,
-            flags,
-            data,
-            date,
-            signature,
-        } = self;
+        let Broadcast { src, certificate, flags, data, date, signature } = self;
         _ser.write_boxed::<crate::ton::PublicKey>(src)?;
         _ser.write_boxed::<crate::ton::overlay::Certificate>(certificate)?;
         _ser.write_bare::<crate::ton::int>(flags)?;
@@ -46,19 +41,13 @@ impl crate::BareDeserialize for Broadcast {
             let data = _de.read_bare::<crate::ton::bytes>()?;
             let date = _de.read_bare::<crate::ton::int>()?;
             let signature = _de.read_bare::<crate::ton::bytes>()?;
-            Ok(Self {
-                src,
-                certificate,
-                flags,
-                data,
-                date,
-                signature,
-            })
+            Ok(Self { src, certificate, flags, data, date, signature })
         }
     }
 }
 impl crate::IntoBoxed for Broadcast {
     type Boxed = crate::ton::overlay::Broadcast;
+
     fn into_boxed(self) -> crate::ton::overlay::Broadcast {
         crate::ton::overlay::Broadcast::Overlay_Broadcast(self)
     }
@@ -87,6 +76,7 @@ impl crate::BareSerialize for BroadcastFec {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0xbad7c36a)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
         let BroadcastFec {
             src,
@@ -143,6 +133,7 @@ impl crate::BareDeserialize for BroadcastFec {
 }
 impl crate::IntoBoxed for BroadcastFec {
     type Boxed = crate::ton::overlay::Broadcast;
+
     fn into_boxed(self) -> crate::ton::overlay::Broadcast {
         crate::ton::overlay::Broadcast::Overlay_BroadcastFec(self)
     }
@@ -167,6 +158,7 @@ impl crate::BareSerialize for BroadcastFecShort {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0xf1881342)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
         let BroadcastFecShort {
             src,
@@ -194,19 +186,13 @@ impl crate::BareDeserialize for BroadcastFecShort {
             let part_data_hash = _de.read_bare::<crate::ton::int256>()?;
             let seqno = _de.read_bare::<crate::ton::int>()?;
             let signature = _de.read_bare::<crate::ton::bytes>()?;
-            Ok(Self {
-                src,
-                certificate,
-                broadcast_hash,
-                part_data_hash,
-                seqno,
-                signature,
-            })
+            Ok(Self { src, certificate, broadcast_hash, part_data_hash, seqno, signature })
         }
     }
 }
 impl crate::IntoBoxed for BroadcastFecShort {
     type Boxed = crate::ton::overlay::Broadcast;
+
     fn into_boxed(self) -> crate::ton::overlay::Broadcast {
         crate::ton::overlay::Broadcast::Overlay_BroadcastFecShort(self)
     }
@@ -222,16 +208,19 @@ impl Id {
             Id::Overlay_Broadcast_Id(ref x) => &x.data_hash,
         }
     }
+
     pub fn flags(&self) -> &crate::ton::int {
         match self {
             Id::Overlay_Broadcast_Id(ref x) => &x.flags,
         }
     }
+
     pub fn src(&self) -> &crate::ton::int256 {
         match self {
             Id::Overlay_Broadcast_Id(ref x) => &x.src,
         }
     }
+
     pub fn only(self) -> crate::ton::overlay::broadcast::id::Id {
         match self {
             Id::Overlay_Broadcast_Id(x) => x,
@@ -255,6 +244,7 @@ impl crate::BoxedDeserialize for Id {
     fn possible_constructors() -> Vec<crate::ConstructorNumber> {
         vec![crate::ConstructorNumber(0x51fd789a)]
     }
+
     fn deserialize_boxed(
         _id: crate::ConstructorNumber,
         _de: &mut crate::Deserializer,
@@ -278,11 +268,13 @@ impl ToSign {
             ToSign::Overlay_Broadcast_ToSign(ref x) => &x.date,
         }
     }
+
     pub fn hash(&self) -> &crate::ton::int256 {
         match self {
             ToSign::Overlay_Broadcast_ToSign(ref x) => &x.hash,
         }
     }
+
     pub fn only(self) -> crate::ton::overlay::broadcast::tosign::ToSign {
         match self {
             ToSign::Overlay_Broadcast_ToSign(x) => x,
@@ -306,6 +298,7 @@ impl crate::BoxedDeserialize for ToSign {
     fn possible_constructors() -> Vec<crate::ConstructorNumber> {
         vec![crate::ConstructorNumber(0xfa374e7c)]
     }
+
     fn deserialize_boxed(
         _id: crate::ConstructorNumber,
         _de: &mut crate::Deserializer,
@@ -328,6 +321,7 @@ impl crate::BareSerialize for Unicast {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x33534e24)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
         let Unicast { data } = self;
         _ser.write_bare::<crate::ton::bytes>(data)?;
@@ -344,6 +338,7 @@ impl crate::BareDeserialize for Unicast {
 }
 impl crate::IntoBoxed for Unicast {
     type Boxed = crate::ton::overlay::Broadcast;
+
     fn into_boxed(self) -> crate::ton::overlay::Broadcast {
         crate::ton::overlay::Broadcast::Overlay_Unicast(self)
     }

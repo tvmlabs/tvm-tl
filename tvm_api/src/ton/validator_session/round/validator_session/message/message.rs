@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Default, Clone, PartialEq)]
 #[doc = "TL-derived from `validatorSession.message.approvedBlock`\n\n```text\nvalidatorSession.message.approvedBlock round:int candidate:int256 signature:bytes = validatorSession.round.Message;\n```\n"]
 pub struct ApprovedBlock {
@@ -16,12 +17,9 @@ impl crate::BareSerialize for ApprovedBlock {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x04a5b581)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let ApprovedBlock {
-            round,
-            candidate,
-            signature,
-        } = self;
+        let ApprovedBlock { round, candidate, signature } = self;
         _ser.write_bare::<crate::ton::int>(round)?;
         _ser.write_bare::<crate::ton::int256>(candidate)?;
         _ser.write_bare::<crate::ton::bytes>(signature)?;
@@ -34,16 +32,13 @@ impl crate::BareDeserialize for ApprovedBlock {
             let round = _de.read_bare::<crate::ton::int>()?;
             let candidate = _de.read_bare::<crate::ton::int256>()?;
             let signature = _de.read_bare::<crate::ton::bytes>()?;
-            Ok(Self {
-                round,
-                candidate,
-                signature,
-            })
+            Ok(Self { round, candidate, signature })
         }
     }
 }
 impl crate::IntoBoxed for ApprovedBlock {
     type Boxed = crate::ton::validator_session::round::Message;
+
     fn into_boxed(self) -> crate::ton::validator_session::round::Message {
         crate::ton::validator_session::round::Message::ValidatorSession_Message_ApprovedBlock(self)
     }
@@ -65,12 +60,9 @@ impl crate::BareSerialize for Commit {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0xac129ef5)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let Commit {
-            round,
-            candidate,
-            signature,
-        } = self;
+        let Commit { round, candidate, signature } = self;
         _ser.write_bare::<crate::ton::int>(round)?;
         _ser.write_bare::<crate::ton::int256>(candidate)?;
         _ser.write_bare::<crate::ton::bytes>(signature)?;
@@ -83,16 +75,13 @@ impl crate::BareDeserialize for Commit {
             let round = _de.read_bare::<crate::ton::int>()?;
             let candidate = _de.read_bare::<crate::ton::int256>()?;
             let signature = _de.read_bare::<crate::ton::bytes>()?;
-            Ok(Self {
-                round,
-                candidate,
-                signature,
-            })
+            Ok(Self { round, candidate, signature })
         }
     }
 }
 impl crate::IntoBoxed for Commit {
     type Boxed = crate::ton::validator_session::round::Message;
+
     fn into_boxed(self) -> crate::ton::validator_session::round::Message {
         crate::ton::validator_session::round::Message::ValidatorSession_Message_Commit(self)
     }
@@ -108,6 +97,7 @@ impl crate::BareSerialize for Empty {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x4a201fa9)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
         let Empty { round, attempt } = self;
         _ser.write_bare::<crate::ton::int>(round)?;
@@ -126,6 +116,7 @@ impl crate::BareDeserialize for Empty {
 }
 impl crate::IntoBoxed for Empty {
     type Boxed = crate::ton::validator_session::round::Message;
+
     fn into_boxed(self) -> crate::ton::validator_session::round::Message {
         crate::ton::validator_session::round::Message::ValidatorSession_Message_Empty(self)
     }
@@ -142,12 +133,9 @@ impl crate::BareSerialize for Precommit {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0xa854b552)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let Precommit {
-            round,
-            attempt,
-            candidate,
-        } = self;
+        let Precommit { round, attempt, candidate } = self;
         _ser.write_bare::<crate::ton::int>(round)?;
         _ser.write_bare::<crate::ton::int>(attempt)?;
         _ser.write_bare::<crate::ton::int256>(candidate)?;
@@ -160,16 +148,13 @@ impl crate::BareDeserialize for Precommit {
             let round = _de.read_bare::<crate::ton::int>()?;
             let attempt = _de.read_bare::<crate::ton::int>()?;
             let candidate = _de.read_bare::<crate::ton::int256>()?;
-            Ok(Self {
-                round,
-                attempt,
-                candidate,
-            })
+            Ok(Self { round, attempt, candidate })
         }
     }
 }
 impl crate::IntoBoxed for Precommit {
     type Boxed = crate::ton::validator_session::round::Message;
+
     fn into_boxed(self) -> crate::ton::validator_session::round::Message {
         crate::ton::validator_session::round::Message::ValidatorSession_Message_Precommit(self)
     }
@@ -186,12 +171,9 @@ impl crate::BareSerialize for RejectedBlock {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x95884e6b)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let RejectedBlock {
-            round,
-            candidate,
-            reason,
-        } = self;
+        let RejectedBlock { round, candidate, reason } = self;
         _ser.write_bare::<crate::ton::int>(round)?;
         _ser.write_bare::<crate::ton::int256>(candidate)?;
         _ser.write_bare::<crate::ton::bytes>(reason)?;
@@ -204,16 +186,13 @@ impl crate::BareDeserialize for RejectedBlock {
             let round = _de.read_bare::<crate::ton::int>()?;
             let candidate = _de.read_bare::<crate::ton::int256>()?;
             let reason = _de.read_bare::<crate::ton::bytes>()?;
-            Ok(Self {
-                round,
-                candidate,
-                reason,
-            })
+            Ok(Self { round, candidate, reason })
         }
     }
 }
 impl crate::IntoBoxed for RejectedBlock {
     type Boxed = crate::ton::validator_session::round::Message;
+
     fn into_boxed(self) -> crate::ton::validator_session::round::Message {
         crate::ton::validator_session::round::Message::ValidatorSession_Message_RejectedBlock(self)
     }
@@ -231,13 +210,9 @@ impl crate::BareSerialize for SubmittedBlock {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x127624b6)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let SubmittedBlock {
-            round,
-            root_hash,
-            file_hash,
-            collated_data_file_hash,
-        } = self;
+        let SubmittedBlock { round, root_hash, file_hash, collated_data_file_hash } = self;
         _ser.write_bare::<crate::ton::int>(round)?;
         _ser.write_bare::<crate::ton::int256>(root_hash)?;
         _ser.write_bare::<crate::ton::int256>(file_hash)?;
@@ -252,17 +227,13 @@ impl crate::BareDeserialize for SubmittedBlock {
             let root_hash = _de.read_bare::<crate::ton::int256>()?;
             let file_hash = _de.read_bare::<crate::ton::int256>()?;
             let collated_data_file_hash = _de.read_bare::<crate::ton::int256>()?;
-            Ok(Self {
-                round,
-                root_hash,
-                file_hash,
-                collated_data_file_hash,
-            })
+            Ok(Self { round, root_hash, file_hash, collated_data_file_hash })
         }
     }
 }
 impl crate::IntoBoxed for SubmittedBlock {
     type Boxed = crate::ton::validator_session::round::Message;
+
     fn into_boxed(self) -> crate::ton::validator_session::round::Message {
         crate::ton::validator_session::round::Message::ValidatorSession_Message_SubmittedBlock(self)
     }
@@ -279,12 +250,9 @@ impl crate::BareSerialize for Vote {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x9a3251c7)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let Vote {
-            round,
-            attempt,
-            candidate,
-        } = self;
+        let Vote { round, attempt, candidate } = self;
         _ser.write_bare::<crate::ton::int>(round)?;
         _ser.write_bare::<crate::ton::int>(attempt)?;
         _ser.write_bare::<crate::ton::int256>(candidate)?;
@@ -297,16 +265,13 @@ impl crate::BareDeserialize for Vote {
             let round = _de.read_bare::<crate::ton::int>()?;
             let attempt = _de.read_bare::<crate::ton::int>()?;
             let candidate = _de.read_bare::<crate::ton::int256>()?;
-            Ok(Self {
-                round,
-                attempt,
-                candidate,
-            })
+            Ok(Self { round, attempt, candidate })
         }
     }
 }
 impl crate::IntoBoxed for Vote {
     type Boxed = crate::ton::validator_session::round::Message;
+
     fn into_boxed(self) -> crate::ton::validator_session::round::Message {
         crate::ton::validator_session::round::Message::ValidatorSession_Message_Vote(self)
     }
@@ -323,12 +288,9 @@ impl crate::BareSerialize for VoteFor {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x61f0fe2f)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let VoteFor {
-            round,
-            attempt,
-            candidate,
-        } = self;
+        let VoteFor { round, attempt, candidate } = self;
         _ser.write_bare::<crate::ton::int>(round)?;
         _ser.write_bare::<crate::ton::int>(attempt)?;
         _ser.write_bare::<crate::ton::int256>(candidate)?;
@@ -341,16 +303,13 @@ impl crate::BareDeserialize for VoteFor {
             let round = _de.read_bare::<crate::ton::int>()?;
             let attempt = _de.read_bare::<crate::ton::int>()?;
             let candidate = _de.read_bare::<crate::ton::int256>()?;
-            Ok(Self {
-                round,
-                attempt,
-                candidate,
-            })
+            Ok(Self { round, attempt, candidate })
         }
     }
 }
 impl crate::IntoBoxed for VoteFor {
     type Boxed = crate::ton::validator_session::round::Message;
+
     fn into_boxed(self) -> crate::ton::validator_session::round::Message {
         crate::ton::validator_session::round::Message::ValidatorSession_Message_VoteFor(self)
     }

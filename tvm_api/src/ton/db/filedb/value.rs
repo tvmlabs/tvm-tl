@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Default, Clone, PartialEq)]
 #[doc = "TL-derived from `db.filedb.value`\n\n```text\ndb.filedb.value key:db.filedb.Key prev:int256 next:int256 file_hash:int256 = db.filedb.Value;\n```\n"]
 pub struct Value {
@@ -12,13 +13,9 @@ impl crate::BareSerialize for Value {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0xf2dd1a2d)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let Value {
-            key,
-            prev,
-            next,
-            file_hash,
-        } = self;
+        let Value { key, prev, next, file_hash } = self;
         _ser.write_boxed::<crate::ton::db::filedb::Key>(key)?;
         _ser.write_bare::<crate::ton::int256>(prev)?;
         _ser.write_bare::<crate::ton::int256>(next)?;
@@ -33,17 +30,13 @@ impl crate::BareDeserialize for Value {
             let prev = _de.read_bare::<crate::ton::int256>()?;
             let next = _de.read_bare::<crate::ton::int256>()?;
             let file_hash = _de.read_bare::<crate::ton::int256>()?;
-            Ok(Self {
-                key,
-                prev,
-                next,
-                file_hash,
-            })
+            Ok(Self { key, prev, next, file_hash })
         }
     }
 }
 impl crate::IntoBoxed for Value {
     type Boxed = crate::ton::db::filedb::Value;
+
     fn into_boxed(self) -> crate::ton::db::filedb::Value {
         crate::ton::db::filedb::Value::Db_Filedb_Value(self)
     }

@@ -1,40 +1,56 @@
-/*
-* Copyright (C) 2019-2023 EverX. All Rights Reserved.
-*
-* Licensed under the SOFTWARE EVALUATION License (the "License"); you may not use
-* this file except in compliance with the License.
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific TON DEV software governing permissions and
-* limitations under the License.
-*/
+// Copyright (C) 2019-2023 EverX. All Rights Reserved.
+//
+// Licensed under the SOFTWARE EVALUATION License (the "License"); you may not
+// use this file except in compliance with the License.
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific TON DEV software governing permissions and
+// limitations under the License.
 
 #![deny(renamed_and_removed_lints, unused_extern_crates)]
 #![recursion_limit = "128"]
 
 use std::borrow::Cow;
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+use std::collections::BTreeMap;
+use std::collections::BTreeSet;
+use std::collections::HashMap;
+use std::collections::HashSet;
 use std::fs::OpenOptions;
 use std::io::Write;
-use std::path::{Path, PathBuf};
+use std::path::Path;
+use std::path::PathBuf;
 use std::process::Command;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::AtomicBool;
+use std::sync::atomic::Ordering;
 
-use proc_macro2::{Ident, Span, TokenStream as Tokens, TokenStream};
-
-use parser::{Constructor, Delimiter, Field, Item, Matched, NameChunks, Type};
-use proc_macro2::{Punct, Spacing};
-use quote::{quote, TokenStreamExt};
+use parser::Constructor;
+use parser::Delimiter;
+use parser::Field;
+use parser::Item;
+use parser::Matched;
+use parser::NameChunks;
+use parser::Type;
+use proc_macro2::Ident;
+use proc_macro2::Punct;
+use proc_macro2::Spacing;
+use proc_macro2::Span;
+use proc_macro2::TokenStream as Tokens;
+use proc_macro2::TokenStream;
+use quote::quote;
+use quote::TokenStreamExt;
 use serde_derive::Deserialize;
 
 pub mod parser {
     use std::cmp::Ordering;
 
-    use pom::char_class::{alphanum, digit, hex_digit};
+    use pom::char_class::alphanum;
+    use pom::char_class::digit;
+    use pom::char_class::hex_digit;
     use pom::parser::*;
-    use pom::{self, Parser};
+    use pom::Parser;
+    use pom::{self};
 
     #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
     pub enum Type {
@@ -116,9 +132,7 @@ pub mod parser {
         }
 
         pub fn namespaces(&self) -> &[String] {
-            self.names_vec()
-                .map(|v| &v[..(v.len() - 1).max(0)])
-                .unwrap_or(&[])
+            self.names_vec().map(|v| &v[..(v.len() - 1).max(0)]).unwrap_or(&[])
         }
 
         pub fn name(&self) -> Option<&str> {
@@ -220,10 +234,7 @@ pub mod parser {
     }
 
     fn tl_id() -> Parser<u8, u32> {
-        sym(b'#')
-            * is_a(hex_digit)
-                .repeat(0..9)
-                .convert(|s| u32::from_str_radix(&utf8(s), 16))
+        sym(b'#') * is_a(hex_digit).repeat(0..9).convert(|s| u32::from_str_radix(&utf8(s), 16))
     }
 
     fn decimal() -> Parser<u8, u32> {
@@ -256,22 +267,14 @@ pub mod parser {
     }
 
     fn base_field() -> Parser<u8, Field> {
-        (ident() - sym(b':') + ty())
-            .map(|(name, ty)| Field {
-                name: Some(name),
-                ty,
-            })
-            .name("field")
+        (ident() - sym(b':') + ty()).map(|(name, ty)| Field { name: Some(name), ty }).name("field")
     }
 
     fn repeated_field() -> Parser<u8, Field> {
         ((decimal() - simple_space() * sym(b'*') * simple_space()).opt()
             + sym(b'[') * call(base_fields)
             - seq(b" ]"))
-        .map(|(repeat_count, fv)| Field {
-            name: None,
-            ty: Type::Repeated(repeat_count, fv),
-        })
+        .map(|(repeat_count, fv)| Field { name: None, ty: Type::Repeated(repeat_count, fv) })
     }
 
     fn base_field_anonymous_or_repeated() -> Parser<u8, Field> {
@@ -334,24 +337,22 @@ pub mod parser {
             - simple_space()
             + output_and_matched(ty_space_generic())
             - sym(b';'))
-        .map(
-            |(((variant, tl_id), (type_parameters, fields)), output)| Constructor {
-                tl_id: get_tl_id(
-                    tl_id,
-                    variant.1.clone(),
-                    type_parameters.clone(),
-                    fields.clone(),
-                    output.1.clone(),
-                ),
-                type_parameters,
-                fields,
-                original_variant: variant.1,
-                variant: Type::Named(variant.0),
-                original_output: output.1,
-                output: output.0,
-                is_function: false,
-            },
-        )
+        .map(|(((variant, tl_id), (type_parameters, fields)), output)| Constructor {
+            tl_id: get_tl_id(
+                tl_id,
+                variant.1.clone(),
+                type_parameters.clone(),
+                fields.clone(),
+                output.1.clone(),
+            ),
+            type_parameters,
+            fields,
+            original_variant: variant.1,
+            variant: Type::Named(variant.0),
+            original_output: output.1,
+            output: output.0,
+            is_function: false,
+        })
         .name("constructor")
     }
 
@@ -431,12 +432,7 @@ pub mod parser {
         }
 
         pub fn trim_common_prefix(&mut self, other: &Self) {
-            assert!(
-                self.0.starts_with(&other.0),
-                "{:?} not a prefix of {:?}",
-                self,
-                other
-            );
+            assert!(self.0.starts_with(&other.0), "{:?} not a prefix of {:?}", self, other);
             self.0.drain(0..(other.0.len()));
         }
     }
@@ -467,11 +463,7 @@ enum NamespaceItem {
 
 fn write_to_file(contents: impl ToString, filename: &Path, append: bool) {
     let mut options = OpenOptions::new();
-    options
-        .create(true)
-        .write(true)
-        .truncate(!append)
-        .append(append);
+    options.create(true).write(true).truncate(!append).append(append);
 
     let mut file = options.open(filename).unwrap_or_else(|err| {
         panic!(
@@ -482,14 +474,9 @@ fn write_to_file(contents: impl ToString, filename: &Path, append: bool) {
         )
     });
 
-    file.write_all(contents.to_string().as_bytes())
-        .unwrap_or_else(|err| {
-            panic!(
-                "Unable to write contents into the file: {}: {}",
-                filename.to_string_lossy(),
-                err
-            )
-        });
+    file.write_all(contents.to_string().as_bytes()).unwrap_or_else(|err| {
+        panic!("Unable to write contents into the file: {}: {}", filename.to_string_lossy(), err)
+    });
 }
 
 fn reformat(filename: &Path) {
@@ -507,12 +494,7 @@ fn reformat(filename: &Path) {
     const INSTALL_INSTRUCTIONS: &str = "It's not an issue, the building will proceed. \
         If you wish to develop using tvm_api, you can install rustfmt by running command: \
         `rustup component add rustfmt`";
-    let status = match Command::new("rustfmt")
-        .arg("--edition")
-        .arg("2018")
-        .arg(filename)
-        .status()
-    {
+    let status = match Command::new("rustfmt").arg("--edition").arg("2018").arg(filename).status() {
         Ok(status) => status,
         Err(err) => {
             if !WARNING_PRINTED.swap(true, Ordering::Relaxed) {
@@ -600,28 +582,17 @@ impl Namespace {
 
         let contents = quote!(#( #items )*);
 
-        let filename = if has_submodules {
-            path.join("mod.rs")
-        } else {
-            path.with_extension("rs")
-        };
+        let filename = if has_submodules { path.join("mod.rs") } else { path.with_extension("rs") };
 
         let dir = filename
             .parent()
             .unwrap_or_else(|| {
-                panic!(
-                    "Unable to get parent directory for: {}",
-                    filename.to_string_lossy()
-                )
+                panic!("Unable to get parent directory for: {}", filename.to_string_lossy())
             })
             .to_path_buf();
 
         std::fs::create_dir_all(&dir).unwrap_or_else(|err| {
-            panic!(
-                "Unable to create directory: {} err: {}",
-                filename.to_string_lossy(),
-                err
-            )
+            panic!("Unable to create directory: {} err: {}", filename.to_string_lossy(), err)
         });
 
         write_to_file(prelude, &filename, append);
@@ -711,10 +682,7 @@ fn filter_items(config: &Option<Config>, iv: &mut Vec<Matched<Item>>) {
 impl AllConstructors {
     fn from_matched_items(config: &Option<Config>, iv: Vec<Matched<Item>>) -> Self {
         let mut current = Delimiter::Types;
-        let mut ret = AllConstructors {
-            items: Default::default(),
-            layer: 0,
-        };
+        let mut ret = AllConstructors { items: Default::default(), layer: 0 };
         let mut constructors_tree: BTreeMap<Vec<String>, Constructors<Type, Field>> =
             BTreeMap::new();
         let mut functions: Vec<Matched<Constructor<Type, Field>>> = Vec::new();
@@ -759,17 +727,12 @@ impl AllConstructors {
                     NamespaceItem::AsVariant(Matched(c.clone(), m.clone())),
                 );
             }
-            ret.items.insert(
-                cs.first_constructor().output.owned_names_vec(),
-                NamespaceItem::AsEnum(cs),
-            );
+            ret.items
+                .insert(cs.first_constructor().output.owned_names_vec(), NamespaceItem::AsEnum(cs));
         }
         for Matched(c, m) in functions {
             let c = c.resolve(config, Delimiter::Functions, &resolve_map);
-            ret.items.insert(
-                c.variant.owned_names_vec(),
-                NamespaceItem::AsFunction(Matched(c, m)),
-            );
+            ret.items.insert(c.variant.owned_names_vec(), NamespaceItem::AsFunction(Matched(c, m)));
         }
         ret
     }
@@ -777,9 +740,8 @@ impl AllConstructors {
     fn as_lazy_statics(&self) -> Tokens {
         let mut all_constructors = Default::default();
         self.items.populate_all_constructors(&mut all_constructors);
-        let dynamic_deserializers = all_constructors
-            .iter()
-            .filter_map(|c| c.as_dynamic_deserializer());
+        let dynamic_deserializers =
+            all_constructors.iter().filter_map(|c| c.as_dynamic_deserializer());
 
         quote! {
             fn make_deserializers() -> ::std::vec::Vec<crate::DynamicDeserializer> {
@@ -887,11 +849,7 @@ impl TypeName {
     {
         let tokens = self.transformed_tokens(func);
         let tokens_canon = format!("{}", tokens);
-        TypeName {
-            tokens,
-            tokens_canon,
-            idents: None,
-        }
+        TypeName { tokens, tokens_canon, idents: None }
     }
 }
 
@@ -932,11 +890,7 @@ where
         }
         let tokens_canon = format!("{}", tokens);
 
-        TypeName {
-            tokens,
-            tokens_canon,
-            idents: Some(idents),
-        }
+        TypeName { tokens, tokens_canon, idents: Some(idents) }
     }
 }
 
@@ -1075,12 +1029,7 @@ impl TypeIR {
             (false, false)
         };
 
-        TypeIR {
-            wire_kind,
-            with_option: false,
-            needs_box,
-            needs_determiner,
-        }
+        TypeIR { wire_kind, with_option: false, needs_box, needs_determiner }
     }
 
     fn bytes() -> Self {
@@ -1124,9 +1073,7 @@ impl TypeIR {
     }
 
     fn with_container(self, mut container: TypeIR) -> Self {
-        container
-            .wire_kind
-            .become_container_for(container.needs_determiner, self.wire_kind);
+        container.wire_kind.become_container_for(container.needs_determiner, self.wire_kind);
         container
     }
 
@@ -1156,9 +1103,7 @@ impl TypeIR {
     }
 
     fn as_write_method(&self) -> Option<Tokens> {
-        self.wire_kind
-            .as_write_method()
-            .map(|m| self.assemble_method(false, m))
+        self.wire_kind.as_write_method().map(|m| self.assemble_method(false, m))
     }
 
     fn non_field_type(&self) -> Tokens {
@@ -1184,44 +1129,24 @@ impl TypeIR {
     }
 
     fn field_type(&self) -> Tokens {
-        if self.is_unit() {
-            quote!(bool)
-        } else {
-            self.boxed()
-        }
+        if self.is_unit() { quote!(bool) } else { self.boxed() }
     }
 
     fn ref_prefix(&self) -> Tokens {
-        if self.is_unit() {
-            quote!()
-        } else {
-            quote!(ref)
-        }
+        if self.is_unit() { quote!() } else { quote!(ref) }
     }
 
     fn reference_prefix(&self) -> Tokens {
-        if self.is_unit() {
-            quote!()
-        } else {
-            quote!(&)
-        }
+        if self.is_unit() { quote!() } else { quote!(&) }
     }
 
     fn local_reference_prefix(&self) -> Tokens {
-        if self.is_unit() {
-            quote!(&)
-        } else {
-            quote!()
-        }
+        if self.is_unit() { quote!(&) } else { quote!() }
     }
 
     fn field_reference_type(&self) -> Tokens {
         let ref_ = self.reference_prefix();
-        let mut ty = if self.is_unit() {
-            quote!(bool)
-        } else {
-            self.non_field_type()
-        };
+        let mut ty = if self.is_unit() { quote!(bool) } else { self.non_field_type() };
         if self.needs_box {
             ty = quote!(Box<#ty>);
         }
@@ -1267,11 +1192,7 @@ impl TypeIR {
     }
 
     fn name(&self) -> syn::Ident {
-        self.wire_kind
-            .opt_names_slice()
-            .and_then(|s| s.last())
-            .unwrap()
-            .clone()
+        self.wire_kind.opt_names_slice().and_then(|s| s.last()).unwrap().clone()
     }
 }
 
@@ -1292,24 +1213,13 @@ impl Field {
         let ty = if replace_string_with_bytes && self.ty.name() == Some("string") {
             TypeIR::bytes()
         } else {
-            let is_flag_field = if let Some(ref value) = self.name {
-                value == "flags"
-            } else {
-                false
-            };
+            let is_flag_field =
+                if let Some(ref value) = self.name { value == "flags" } else { false };
             self.ty.resolved(config, resolve_map, is_flag_field)
         };
 
-        let name = if let Some(ref value) = self.name {
-            value.clone()
-        } else {
-            String::new()
-        };
-        FieldIR {
-            ty,
-            name,
-            flag_bit: self.ty.flag_field(),
-        }
+        let name = if let Some(ref value) = self.name { value.clone() } else { String::new() };
+        FieldIR { ty, name, flag_bit: self.ty.flag_field() }
     }
 }
 
@@ -1366,9 +1276,9 @@ impl Type {
                 };
                 ty.with_container(container)
             }
-            Type::Flagged(_, _, ty) => ty
-                .resolved(config, resolve_map, false)
-                .with_option_wrapper(),
+            Type::Flagged(_, _, ty) => {
+                ty.resolved(config, resolve_map, false).with_option_wrapper()
+            }
             Type::Flags => TypeIR::flags(),
             Type::Int if is_flag_field => TypeIR::flags(),
             Type::Int => TypeIR::int(),
@@ -1445,10 +1355,7 @@ impl Constructor<Type, Field> {
         if &self.original_variant == "manual.gzip_packed" {
             ret.push(FieldIR::extra_default(
                 "unpacked",
-                ["TLObject"]
-                    .iter()
-                    .collect::<TypeName>()
-                    .transformed(|t| quote!(Option<#t>)),
+                ["TLObject"].iter().collect::<TypeName>().transformed(|t| quote!(Option<#t>)),
             ));
         }
         ret
@@ -1461,11 +1368,7 @@ impl Constructor<TypeIR, FieldIR> {
         if self.fields.is_empty() {
             quote! { #trailer }
         } else {
-            let fields = self
-                .fields
-                .iter()
-                .filter(|f| !f.ty.is_flags())
-                .map(FieldIR::as_field);
+            let fields = self.fields.iter().filter(|f| !f.ty.is_flags()).map(FieldIR::as_field);
             quote! {
                 { #( #pub_ #fields , )* }
             }
@@ -1526,19 +1429,13 @@ impl Constructor<TypeIR, FieldIR> {
     }
 
     fn as_struct_doc(&self, matched: &str) -> String {
-        format!(
-            "TL-derived from `{}`\n\n```text\n{}\n```\n",
-            self.original_variant, matched
-        )
+        format!("TL-derived from `{}`\n\n```text\n{}\n```\n", self.original_variant, matched)
     }
 
     fn as_struct_base(&self, config: &Option<Config>, name: &syn::Ident, matched: &str) -> Tokens {
         let doc = self.as_struct_doc(matched);
-        let derives = gen_derives(
-            config,
-            quote! { Debug, Default, Clone, PartialEq },
-            name.to_string(),
-        );
+        let derives =
+            gen_derives(config, quote! { Debug, Default, Clone, PartialEq }, name.to_string());
         let impl_generics = self.impl_generics();
         let fields = self.fields_tokens(quote! {pub}, quote! {;});
         let signing_trait_impl = self.as_signing_trait_impl();
@@ -1884,10 +1781,7 @@ impl Constructor<TypeIR, FieldIR> {
             self.output.unboxed()
         };
         if !self.type_parameters.is_empty() {
-            let generics = self
-                .type_parameters
-                .iter()
-                .map(|_| quote!(crate::ton::TLObject));
+            let generics = self.type_parameters.iter().map(|_| quote!(crate::ton::TLObject));
             ty = quote!(#ty<#(#generics),*>);
         }
         Some(quote! {
@@ -2017,11 +1911,8 @@ impl Constructors<TypeIR, FieldIR> {
         }
         let cons_name = cons.full_variant_name();
         let ty = cons.variant.unboxed();
-        let deref = if cons.variant.needs_box {
-            Some(Punct::new('*', Spacing::Joint))
-        } else {
-            None
-        };
+        let deref =
+            if cons.variant.needs_box { Some(Punct::new('*', Spacing::Joint)) } else { None };
         Some(quote! {
             pub fn only(self) -> #ty {
                 match self {
@@ -2053,11 +1944,7 @@ impl Constructors<TypeIR, FieldIR> {
                 let cons_name = c.full_variant_name();
                 quote!(#enum_name::#cons_name(ref x) => #value)
             });
-            let trailer = if exhaustive {
-                quote!()
-            } else {
-                quote!(_ => None)
-            };
+            let trailer = if exhaustive { quote!() } else { quote!(_ => None) };
             let ty = return_ir.field_reference_type();
             methods.push(quote! {
                 pub fn #name(&self) -> #ty {
@@ -2145,11 +2032,7 @@ impl Constructors<TypeIR, FieldIR> {
     fn constructors_and_tl_ids<'this>(
         &'this self,
     ) -> Box<dyn 'this + Iterator<Item = (Tokens, &'this Constructor<TypeIR, FieldIR>)>> {
-        Box::new(
-            self.0
-                .iter()
-                .filter_map(|cm| cm.0.tl_id().map(|id| (id, &cm.0))),
-        )
+        Box::new(self.0.iter().filter_map(|cm| cm.0.tl_id().map(|id| (id, &cm.0))))
     }
 
     fn as_serialize_match(&self, enum_name: &syn::Ident) -> Tokens {
@@ -2186,10 +2069,8 @@ impl Constructors<TypeIR, FieldIR> {
 
     fn as_enum_doc(&self) -> String {
         use std::fmt::Write;
-        let mut ret = format!(
-            "TL-derived from `{}`\n\n```text\n",
-            &self.first_constructor().original_output
-        );
+        let mut ret =
+            format!("TL-derived from `{}`\n\n```text\n", &self.first_constructor().original_output);
         for (e, cm) in self.0.iter().enumerate() {
             if e != 0 {
                 ret.write_str("\n\n").unwrap();
@@ -2221,11 +2102,8 @@ impl Constructors<TypeIR, FieldIR> {
         }
         let ty = cons.variant.unboxed();
 
-        let default = if cons.variant.needs_box {
-            quote!(Box::default())
-        } else {
-            quote!(#ty::default())
-        };
+        let default =
+            if cons.variant.needs_box { quote!(Box::default()) } else { quote!(#ty::default()) };
 
         Some(quote! {
             impl Default for #name {

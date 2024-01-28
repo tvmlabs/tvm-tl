@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Default, Clone, PartialEq)]
 #[doc = "TL-derived from `raw.transaction`\n\n```text\nraw.transaction utime:int53 data:bytes transaction_id:internal.transactionId fee:int64 storage_fee:int64 other_fee:int64 in_msg:raw.message out_msgs:vector<raw.message> = raw.Transaction;\n```\n"]
 pub struct Transaction {
@@ -16,6 +17,7 @@ impl crate::BareSerialize for Transaction {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x70828481)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
         let Transaction {
             utime,
@@ -52,21 +54,13 @@ impl crate::BareDeserialize for Transaction {
             let other_fee = _de.read_bare::<crate::ton::int64>()?;
             let in_msg = _de.read_bare::<crate::ton::raw::message::Message>()?;
             let out_msgs = _de . read_bare :: < crate :: ton :: vector < crate :: ton :: Bare , crate :: ton :: raw :: message :: Message > > () ? ;
-            Ok(Self {
-                utime,
-                data,
-                transaction_id,
-                fee,
-                storage_fee,
-                other_fee,
-                in_msg,
-                out_msgs,
-            })
+            Ok(Self { utime, data, transaction_id, fee, storage_fee, other_fee, in_msg, out_msgs })
         }
     }
 }
 impl crate::IntoBoxed for Transaction {
     type Boxed = crate::ton::raw::Transaction;
+
     fn into_boxed(self) -> crate::ton::raw::Transaction {
         crate::ton::raw::Transaction::Raw_Transaction(self)
     }

@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Clone, PartialEq, Default)]
 #[doc = "TL-derived from `db.files.Key`\n\n```text\ndb.files.index.key = db.files.Key;\n\ndb.files.package.key package_id:int key:Bool temp:Bool = db.files.Key;\n```\n"]
 pub enum Key {
@@ -13,12 +14,14 @@ impl Key {
             _ => None,
         }
     }
+
     pub fn package_id(&self) -> Option<&crate::ton::int> {
         match self {
             Key::Db_Files_Package_Key(ref x) => Some(&x.package_id),
             _ => None,
         }
     }
+
     pub fn temp(&self) -> Option<&crate::ton::Bool> {
         match self {
             Key::Db_Files_Package_Key(ref x) => Some(&x.temp),
@@ -37,11 +40,9 @@ impl crate::BoxedSerialize for Key {
 }
 impl crate::BoxedDeserialize for Key {
     fn possible_constructors() -> Vec<crate::ConstructorNumber> {
-        vec![
-            crate::ConstructorNumber(0x7dc40502),
-            crate::ConstructorNumber(0xa504033e),
-        ]
+        vec![crate::ConstructorNumber(0x7dc40502), crate::ConstructorNumber(0xa504033e)]
     }
+
     fn deserialize_boxed(
         _id: crate::ConstructorNumber,
         _de: &mut crate::Deserializer,
@@ -65,20 +66,18 @@ impl crate::BoxedSerialize for Option<crate::ton::db::files::package::key::Key> 
 }
 impl crate::BoxedDeserialize for Option<crate::ton::db::files::package::key::Key> {
     fn possible_constructors() -> Vec<crate::ConstructorNumber> {
-        vec![
-            crate::ConstructorNumber(0x7dc40502),
-            crate::ConstructorNumber(0xa504033e),
-        ]
+        vec![crate::ConstructorNumber(0x7dc40502), crate::ConstructorNumber(0xa504033e)]
     }
+
     fn deserialize_boxed(
         _id: crate::ConstructorNumber,
         _de: &mut crate::Deserializer,
     ) -> crate::Result<Self> {
         match _id {
             crate::ConstructorNumber(0x7dc40502) => Ok(None),
-            crate::ConstructorNumber(0xa504033e) => Ok(Some(
-                _de.read_bare::<crate::ton::db::files::package::key::Key>()?,
-            )),
+            crate::ConstructorNumber(0xa504033e) => {
+                Ok(Some(_de.read_bare::<crate::ton::db::files::package::key::Key>()?))
+            }
             id => _invalid_id!(id),
         }
     }

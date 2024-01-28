@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Default, Clone, PartialEq)]
 #[doc = "TL-derived from `validatorSession.candidateId`\n\n```text\nvalidatorSession.candidateId src:int256 root_hash:int256 file_hash:int256 collated_data_file_hash:int256 = validatorSession.CandidateId;\n```\n"]
 pub struct CandidateId {
@@ -12,13 +13,9 @@ impl crate::BareSerialize for CandidateId {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x19fee56c)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let CandidateId {
-            src,
-            root_hash,
-            file_hash,
-            collated_data_file_hash,
-        } = self;
+        let CandidateId { src, root_hash, file_hash, collated_data_file_hash } = self;
         _ser.write_bare::<crate::ton::int256>(src)?;
         _ser.write_bare::<crate::ton::int256>(root_hash)?;
         _ser.write_bare::<crate::ton::int256>(file_hash)?;
@@ -33,17 +30,13 @@ impl crate::BareDeserialize for CandidateId {
             let root_hash = _de.read_bare::<crate::ton::int256>()?;
             let file_hash = _de.read_bare::<crate::ton::int256>()?;
             let collated_data_file_hash = _de.read_bare::<crate::ton::int256>()?;
-            Ok(Self {
-                src,
-                root_hash,
-                file_hash,
-                collated_data_file_hash,
-            })
+            Ok(Self { src, root_hash, file_hash, collated_data_file_hash })
         }
     }
 }
 impl crate::IntoBoxed for CandidateId {
     type Boxed = crate::ton::validator_session::CandidateId;
+
     fn into_boxed(self) -> crate::ton::validator_session::CandidateId {
         crate::ton::validator_session::CandidateId::ValidatorSession_CandidateId(self)
     }

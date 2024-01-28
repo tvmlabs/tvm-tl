@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Default, Clone, PartialEq)]
 #[doc = "TL-derived from `tonNode.rempCatchainMessage`\n\n```text\ntonNode.rempCatchainMessage message:bytes message_id:int256 source_key_id:int256 source_idx:int masterchain_seqno:int = tonNode.rempCatchainRecord;\n```\n"]
 pub struct RempCatchainMessage {
@@ -13,6 +14,7 @@ impl crate::BareSerialize for RempCatchainMessage {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0xe9d6eb1c)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
         let RempCatchainMessage {
             message,
@@ -37,18 +39,13 @@ impl crate::BareDeserialize for RempCatchainMessage {
             let source_key_id = _de.read_bare::<crate::ton::int256>()?;
             let source_idx = _de.read_bare::<crate::ton::int>()?;
             let masterchain_seqno = _de.read_bare::<crate::ton::int>()?;
-            Ok(Self {
-                message,
-                message_id,
-                source_key_id,
-                source_idx,
-                masterchain_seqno,
-            })
+            Ok(Self { message, message_id, source_key_id, source_idx, masterchain_seqno })
         }
     }
 }
 impl crate::IntoBoxed for RempCatchainMessage {
     type Boxed = crate::ton::ton_node::RempCatchainRecord;
+
     fn into_boxed(self) -> crate::ton::ton_node::RempCatchainRecord {
         crate::ton::ton_node::RempCatchainRecord::TonNode_RempCatchainMessage(self)
     }
@@ -67,11 +64,9 @@ impl crate::BareSerialize for RempCatchainMessageDigest {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x384e3f84)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let RempCatchainMessageDigest {
-            masterchain_seqno,
-            messages,
-        } = self;
+        let RempCatchainMessageDigest { masterchain_seqno, messages } = self;
         _ser.write_bare::<crate::ton::int>(masterchain_seqno)?;
         _ser.write_bare::<crate::ton::vector<
             crate::ton::Bare,
@@ -88,15 +83,13 @@ impl crate::BareDeserialize for RempCatchainMessageDigest {
                 crate::ton::Bare,
                 crate::ton::ton_node::rempcatchainmessageids::RempCatchainMessageIds,
             >>()?;
-            Ok(Self {
-                masterchain_seqno,
-                messages,
-            })
+            Ok(Self { masterchain_seqno, messages })
         }
     }
 }
 impl crate::IntoBoxed for RempCatchainMessageDigest {
     type Boxed = crate::ton::ton_node::RempCatchainRecord;
+
     fn into_boxed(self) -> crate::ton::ton_node::RempCatchainRecord {
         crate::ton::ton_node::RempCatchainRecord::TonNode_RempCatchainMessageDigest(self)
     }

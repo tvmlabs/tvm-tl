@@ -1,42 +1,42 @@
-/*
-* Copyright (C) 2019-2023 EverX. All Rights Reserved.
-*
-* Licensed under the SOFTWARE EVALUATION License (the "License"); you may not use
-* this file except in compliance with the License.
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific TON DEV software governing permissions and
-* limitations under the License.
-*/
+// Copyright (C) 2019-2023 EverX. All Rights Reserved.
+//
+// Licensed under the SOFTWARE EVALUATION License (the "License"); you may not
+// use this file except in compliance with the License.
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific TON DEV software governing permissions and
+// limitations under the License.
 
 #![allow(clippy::unreadable_literal)]
 #![deny(renamed_and_removed_lints)]
 
-use crate::{
-    ton::ton_node::{RempMessageLevel, RempMessageStatus},
-    ton_prelude::TLObject,
-};
-use std::{
-    any::Any,
-    convert::TryFrom,
-    fmt,
-    hash::Hash,
-    io::{self, Read, Write},
-    sync::Arc,
-};
+use std::any::Any;
+use std::convert::TryFrom;
+use std::fmt;
+use std::hash::Hash;
+use std::io::Read;
+use std::io::Write;
+use std::io::{self};
+use std::sync::Arc;
 
-use tvm_block::{BlockIdExt, ShardIdent};
-use tvm_types::{fail, Ed25519KeyOption, KeyOption, Result, UInt256};
+use tvm_block::BlockIdExt;
+use tvm_block::ShardIdent;
+use tvm_types::fail;
+use tvm_types::Ed25519KeyOption;
+use tvm_types::KeyOption;
+use tvm_types::Result;
+use tvm_types::UInt256;
+
+use crate::ton::ton_node::RempMessageLevel;
+use crate::ton::ton_node::RempMessageStatus;
+use crate::ton_prelude::TLObject;
 
 macro_rules! _invalid_id {
     ($id:ident) => {
-        Err(crate::InvalidConstructor {
-            expected: Self::possible_constructors(),
-            received: $id,
-        }
-        .into())
+        Err(crate::InvalidConstructor { expected: Self::possible_constructors(), received: $id }
+            .into())
     };
 }
 
@@ -49,7 +49,8 @@ pub fn build_commit() -> Option<&'static str> {
     std::option_env!("BUILD_GIT_COMMIT")
 }
 
-/// Struct representing TL constructor number (CRC32 calculated from constructor definition string)
+/// Struct representing TL constructor number (CRC32 calculated from constructor
+/// definition string)
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ConstructorNumber(pub u32);
 
@@ -61,10 +62,7 @@ impl fmt::Debug for ConstructorNumber {
 
 /// Struct for handling mismatched constructor number
 #[derive(Debug, failure::Fail)]
-#[fail(
-    display = "expected a constructor in {:?}; got {:?}",
-    expected, received
-)]
+#[fail(display = "expected a constructor in {:?}; got {:?}", expected, received)]
 pub struct InvalidConstructor {
     pub expected: Vec<ConstructorNumber>,
     pub received: ConstructorNumber,
@@ -84,7 +82,8 @@ impl<'r> Deserializer<'r> {
 
     /// Read `ConstructorNumber` from reader
     pub fn read_constructor(&mut self) -> Result<ConstructorNumber> {
-        use byteorder::{LittleEndian, ReadBytesExt};
+        use byteorder::LittleEndian;
+        use byteorder::ReadBytesExt;
         Ok(ConstructorNumber(self.read_u32::<LittleEndian>()?))
     }
 
@@ -150,7 +149,8 @@ where
 
 /// Trait for deserializing any value represented `Object` TL type
 pub trait BoxedDeserializeDynamic: BoxedDeserialize {
-    /// Read boxed type value with given `ConstructorNumber` using `Deserializer`
+    /// Read boxed type value with given `ConstructorNumber` using
+    /// `Deserializer`
     fn boxed_deserialize_to_box(
         id: ConstructorNumber,
         de: &mut Deserializer,
@@ -183,11 +183,7 @@ impl DynamicDeserializer {
         id: ConstructorNumber,
         type_name: &'static str,
     ) -> Self {
-        DynamicDeserializer {
-            id,
-            type_name,
-            ton: D::boxed_deserialize_to_box,
-        }
+        DynamicDeserializer { id, type_name, ton: D::boxed_deserialize_to_box }
     }
 }
 
@@ -204,7 +200,8 @@ impl<'w> Serializer<'w> {
 
     /// Read `ConstructorNumber` into writer
     pub fn write_constructor(&mut self, id: ConstructorNumber) -> Result<()> {
-        use byteorder::{LittleEndian, WriteBytesExt};
+        use byteorder::LittleEndian;
+        use byteorder::WriteBytesExt;
         self.write_u32::<LittleEndian>(id.0)?;
         Ok(())
     }
@@ -261,7 +258,8 @@ pub trait BareSerialize {
 
 /// Trait for boxed type serialization
 pub trait BoxedSerialize {
-    /// Represent boxed type value as `ConstructorNumber` and `BareSerialize` tuple
+    /// Represent boxed type value as `ConstructorNumber` and `BareSerialize`
+    /// tuple
     fn serialize_boxed(&self) -> (ConstructorNumber, &dyn BareSerialize);
 
     /// Serialize boxed type value into `Vec<u8>`
@@ -288,6 +286,7 @@ impl<T: Any + Send + Sync + BoxedSerialize> AnyBoxedSerialize for T {
     fn as_any(&self) -> &dyn Any {
         self
     }
+
     fn into_boxed_any(self: Box<Self>) -> Box<dyn Any + Send> {
         self
     }
@@ -318,6 +317,7 @@ impl BareSerialize for BlockIdExt {
     fn constructor(&self) -> ConstructorNumber {
         crate::ton::ton_node::blockidext::TL_TAG
     }
+
     fn serialize_bare(&self, se: &mut Serializer) -> Result<()> {
         let shard = self.shard();
         se.write_bare::<crate::ton::int>(&shard.workchain_id())?;
@@ -333,6 +333,7 @@ impl BoxedDeserialize for BlockIdExt {
     fn possible_constructors() -> Vec<crate::ConstructorNumber> {
         vec![crate::ton::ton_node::blockidext::TL_TAG]
     }
+
     fn deserialize_boxed(id: ConstructorNumber, de: &mut Deserializer) -> Result<Self> {
         if id == crate::ton::ton_node::blockidext::TL_TAG {
             de.read_bare()
@@ -360,6 +361,7 @@ impl BareSerialize for UInt256 {
     fn constructor(&self) -> ConstructorNumber {
         unreachable!()
     }
+
     fn serialize_bare(&self, se: &mut Serializer) -> Result<()> {
         se.write_all(self.as_slice())?;
         Ok(())
@@ -381,11 +383,9 @@ impl fmt::Display for RempMessageStatus {
                     )
                 }
             }
-            RempMessageStatus::TonNode_RempRejected(r) => write!(
-                f,
-                "Rejected by {:?}, block {}, reason `{}`",
-                r.level, r.block_id, r.error
-            ),
+            RempMessageStatus::TonNode_RempRejected(r) => {
+                write!(f, "Rejected by {:?}, block {}, reason `{}`", r.level, r.block_id, r.error)
+            }
             RempMessageStatus::TonNode_RempIgnored(i) => {
                 if i.block_id.seq_no() == 0 {
                     write!(f, "Ignored by {:?}", i.level)
@@ -408,6 +408,7 @@ impl fmt::Display for RempMessageStatus {
 
 impl TryFrom<u8> for RempMessageLevel {
     type Error = tvm_types::Error;
+
     fn try_from(value: u8) -> Result<Self> {
         Ok(match value {
             1 => RempMessageLevel::TonNode_RempCollator,
@@ -435,11 +436,9 @@ impl From<&RempMessageLevel> for u8 {
 fn downcast_with_error<D: AnyBoxedSerialize>(object: TLObject) -> Result<D> {
     match object.downcast() {
         Ok(result) => Ok(result),
-        Err(object) => fail!(
-            "Want to get {}, but we have TLObject {:?}",
-            std::any::type_name::<D>(),
-            object
-        ),
+        Err(object) => {
+            fail!("Want to get {}, but we have TLObject {:?}", std::any::type_name::<D>(), object)
+        }
     }
 }
 
@@ -500,7 +499,8 @@ pub fn deserialize_typed<D: AnyBoxedSerialize>(bytes: impl AsRef<[u8]>) -> Resul
     downcast_with_error(object)
 }
 
-/// Deserialize boxed TL object from bytes then downcast to given type and return suffix position
+/// Deserialize boxed TL object from bytes then downcast to given type and
+/// return suffix position
 pub fn deserialize_typed_with_suffix<D: AnyBoxedSerialize>(
     bytes: impl AsRef<[u8]>,
 ) -> Result<(D, usize)> {
@@ -569,15 +569,12 @@ pub fn tag_from_boxed_type<T: Default + BoxedSerialize>() -> u32 {
 
 /// Get TL tag from data bytes
 pub fn tag_from_data(data: &[u8]) -> u32 {
-    if data.len() < 4 {
-        0
-    } else {
-        u32::from_le_bytes([data[0], data[1], data[2], data[3]])
-    }
+    if data.len() < 4 { 0 } else { u32::from_le_bytes([data[0], data[1], data[2], data[3]]) }
 }
 
 impl TryFrom<&Arc<dyn KeyOption>> for ton::PublicKey {
     type Error = tvm_types::Error;
+
     fn try_from(value: &Arc<dyn KeyOption>) -> Result<Self> {
         let key = UInt256::with_array(value.pub_key()?.try_into()?);
         let key = ton::pub_::publickey::Ed25519 { key }.into_boxed();
@@ -587,6 +584,7 @@ impl TryFrom<&Arc<dyn KeyOption>> for ton::PublicKey {
 
 impl TryFrom<&ton::PublicKey> for Arc<dyn KeyOption> {
     type Error = tvm_types::Error;
+
     fn try_from(value: &ton::PublicKey) -> Result<Self> {
         match value {
             ton::PublicKey::Pub_Ed25519(key) => {

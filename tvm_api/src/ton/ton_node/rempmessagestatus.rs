@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Default, Clone, PartialEq)]
 #[doc = "TL-derived from `tonNode.rempAccepted`\n\n```text\ntonNode.rempAccepted level:tonNode.RempMessageLevel block_id:tonNode.blockIdExt master_id:tonNode.blockIdExt = tonNode.RempMessageStatus;\n```\n"]
 pub struct RempAccepted {
@@ -11,12 +12,9 @@ impl crate::BareSerialize for RempAccepted {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x30225e0e)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let RempAccepted {
-            level,
-            block_id,
-            master_id,
-        } = self;
+        let RempAccepted { level, block_id, master_id } = self;
         _ser.write_boxed::<crate::ton::ton_node::RempMessageLevel>(level)?;
         _ser.write_bare::<crate::ton::ton_node::blockidext::BlockIdExt>(block_id)?;
         _ser.write_bare::<crate::ton::ton_node::blockidext::BlockIdExt>(master_id)?;
@@ -29,16 +27,13 @@ impl crate::BareDeserialize for RempAccepted {
             let level = _de.read_boxed::<crate::ton::ton_node::RempMessageLevel>()?;
             let block_id = _de.read_bare::<crate::ton::ton_node::blockidext::BlockIdExt>()?;
             let master_id = _de.read_bare::<crate::ton::ton_node::blockidext::BlockIdExt>()?;
-            Ok(Self {
-                level,
-                block_id,
-                master_id,
-            })
+            Ok(Self { level, block_id, master_id })
         }
     }
 }
 impl crate::IntoBoxed for RempAccepted {
     type Boxed = crate::ton::ton_node::RempMessageStatus;
+
     fn into_boxed(self) -> crate::ton::ton_node::RempMessageStatus {
         crate::ton::ton_node::RempMessageStatus::TonNode_RempAccepted(self)
     }
@@ -53,6 +48,7 @@ impl crate::BareSerialize for RempDuplicate {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x9ecd4334)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
         let RempDuplicate { block_id } = self;
         _ser.write_bare::<crate::ton::ton_node::blockidext::BlockIdExt>(block_id)?;
@@ -69,6 +65,7 @@ impl crate::BareDeserialize for RempDuplicate {
 }
 impl crate::IntoBoxed for RempDuplicate {
     type Boxed = crate::ton::ton_node::RempMessageStatus;
+
     fn into_boxed(self) -> crate::ton::ton_node::RempMessageStatus {
         crate::ton::ton_node::RempMessageStatus::TonNode_RempDuplicate(self)
     }
@@ -84,6 +81,7 @@ impl crate::BareSerialize for RempIgnored {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x43bebb8b)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
         let RempIgnored { level, block_id } = self;
         _ser.write_boxed::<crate::ton::ton_node::RempMessageLevel>(level)?;
@@ -102,6 +100,7 @@ impl crate::BareDeserialize for RempIgnored {
 }
 impl crate::IntoBoxed for RempIgnored {
     type Boxed = crate::ton::ton_node::RempMessageStatus;
+
     fn into_boxed(self) -> crate::ton::ton_node::RempMessageStatus {
         crate::ton::ton_node::RempMessageStatus::TonNode_RempIgnored(self)
     }
@@ -118,12 +117,9 @@ impl crate::BareSerialize for RempRejected {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0xb4e1ee77)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let RempRejected {
-            level,
-            block_id,
-            error,
-        } = self;
+        let RempRejected { level, block_id, error } = self;
         _ser.write_boxed::<crate::ton::ton_node::RempMessageLevel>(level)?;
         _ser.write_bare::<crate::ton::ton_node::blockidext::BlockIdExt>(block_id)?;
         _ser.write_bare::<crate::ton::string>(error)?;
@@ -136,16 +132,13 @@ impl crate::BareDeserialize for RempRejected {
             let level = _de.read_boxed::<crate::ton::ton_node::RempMessageLevel>()?;
             let block_id = _de.read_bare::<crate::ton::ton_node::blockidext::BlockIdExt>()?;
             let error = _de.read_bare::<crate::ton::string>()?;
-            Ok(Self {
-                level,
-                block_id,
-                error,
-            })
+            Ok(Self { level, block_id, error })
         }
     }
 }
 impl crate::IntoBoxed for RempRejected {
     type Boxed = crate::ton::ton_node::RempMessageStatus;
+
     fn into_boxed(self) -> crate::ton::ton_node::RempMessageStatus {
         crate::ton::ton_node::RempMessageStatus::TonNode_RempRejected(self)
     }
@@ -161,11 +154,9 @@ impl crate::BareSerialize for RempSentToValidators {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x2ff6c87b)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let RempSentToValidators {
-            sent_to,
-            total_validators,
-        } = self;
+        let RempSentToValidators { sent_to, total_validators } = self;
         _ser.write_bare::<crate::ton::int>(sent_to)?;
         _ser.write_bare::<crate::ton::int>(total_validators)?;
         Ok(())
@@ -176,15 +167,13 @@ impl crate::BareDeserialize for RempSentToValidators {
         {
             let sent_to = _de.read_bare::<crate::ton::int>()?;
             let total_validators = _de.read_bare::<crate::ton::int>()?;
-            Ok(Self {
-                sent_to,
-                total_validators,
-            })
+            Ok(Self { sent_to, total_validators })
         }
     }
 }
 impl crate::IntoBoxed for RempSentToValidators {
     type Boxed = crate::ton::ton_node::RempMessageStatus;
+
     fn into_boxed(self) -> crate::ton::ton_node::RempMessageStatus {
         crate::ton::ton_node::RempMessageStatus::TonNode_RempSentToValidators(self)
     }

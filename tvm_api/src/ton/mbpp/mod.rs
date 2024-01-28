@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Clone, PartialEq, Default)]
 #[doc = "TL-derived from `mbpp.NewMcBlock`\n\n```text\nmbpp.newMcBlockNone = mbpp.NewMcBlock;\n\nmbpp.newMcBlockSome block:tonNode.blockBroadcast = mbpp.NewMcBlock;\n```\n"]
 pub enum NewMcBlock {
@@ -25,11 +26,9 @@ impl crate::BoxedSerialize for NewMcBlock {
 }
 impl crate::BoxedDeserialize for NewMcBlock {
     fn possible_constructors() -> Vec<crate::ConstructorNumber> {
-        vec![
-            crate::ConstructorNumber(0x8c046fa1),
-            crate::ConstructorNumber(0xde670c49),
-        ]
+        vec![crate::ConstructorNumber(0x8c046fa1), crate::ConstructorNumber(0xde670c49)]
     }
+
     fn deserialize_boxed(
         _id: crate::ConstructorNumber,
         _de: &mut crate::Deserializer,
@@ -53,20 +52,18 @@ impl crate::BoxedSerialize for Option<crate::ton::mbpp::newmcblock::NewMcBlockSo
 }
 impl crate::BoxedDeserialize for Option<crate::ton::mbpp::newmcblock::NewMcBlockSome> {
     fn possible_constructors() -> Vec<crate::ConstructorNumber> {
-        vec![
-            crate::ConstructorNumber(0x8c046fa1),
-            crate::ConstructorNumber(0xde670c49),
-        ]
+        vec![crate::ConstructorNumber(0x8c046fa1), crate::ConstructorNumber(0xde670c49)]
     }
+
     fn deserialize_boxed(
         _id: crate::ConstructorNumber,
         _de: &mut crate::Deserializer,
     ) -> crate::Result<Self> {
         match _id {
             crate::ConstructorNumber(0x8c046fa1) => Ok(None),
-            crate::ConstructorNumber(0xde670c49) => Ok(Some(
-                _de.read_bare::<crate::ton::mbpp::newmcblock::NewMcBlockSome>()?,
-            )),
+            crate::ConstructorNumber(0xde670c49) => {
+                Ok(Some(_de.read_bare::<crate::ton::mbpp::newmcblock::NewMcBlockSome>()?))
+            }
             id => _invalid_id!(id),
         }
     }
@@ -82,21 +79,25 @@ impl NewShardBlock {
             NewShardBlock::Mbpp_NewShardBlock(ref x) => &x.block,
         }
     }
+
     pub fn cc_seqno(&self) -> &crate::ton::int {
         match self {
             NewShardBlock::Mbpp_NewShardBlock(ref x) => &x.cc_seqno,
         }
     }
+
     pub fn id(&self) -> &crate::ton::ton_node::blockidext::BlockIdExt {
         match self {
             NewShardBlock::Mbpp_NewShardBlock(ref x) => &x.id,
         }
     }
+
     pub fn tbd(&self) -> &crate::ton::bytes {
         match self {
             NewShardBlock::Mbpp_NewShardBlock(ref x) => &x.tbd,
         }
     }
+
     pub fn only(self) -> crate::ton::mbpp::newshardblock::NewShardBlock {
         match self {
             NewShardBlock::Mbpp_NewShardBlock(x) => x,
@@ -120,6 +121,7 @@ impl crate::BoxedDeserialize for NewShardBlock {
     fn possible_constructors() -> Vec<crate::ConstructorNumber> {
         vec![crate::ConstructorNumber(0x54d61ee6)]
     }
+
     fn deserialize_boxed(
         _id: crate::ConstructorNumber,
         _de: &mut crate::Deserializer,

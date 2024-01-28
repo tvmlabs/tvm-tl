@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Default, Clone, PartialEq)]
 #[doc = "TL-derived from `liteServer.blockState`\n\n```text\nliteServer.blockState id:tonNode.blockIdExt root_hash:int256 file_hash:int256 data:bytes = liteServer.BlockState;\n```\n"]
 pub struct BlockState {
@@ -12,13 +13,9 @@ impl crate::BareSerialize for BlockState {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0xabaddc0c)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let BlockState {
-            id,
-            root_hash,
-            file_hash,
-            data,
-        } = self;
+        let BlockState { id, root_hash, file_hash, data } = self;
         _ser.write_bare::<crate::ton::ton_node::blockidext::BlockIdExt>(id)?;
         _ser.write_bare::<crate::ton::int256>(root_hash)?;
         _ser.write_bare::<crate::ton::int256>(file_hash)?;
@@ -33,17 +30,13 @@ impl crate::BareDeserialize for BlockState {
             let root_hash = _de.read_bare::<crate::ton::int256>()?;
             let file_hash = _de.read_bare::<crate::ton::int256>()?;
             let data = _de.read_bare::<crate::ton::bytes>()?;
-            Ok(Self {
-                id,
-                root_hash,
-                file_hash,
-                data,
-            })
+            Ok(Self { id, root_hash, file_hash, data })
         }
     }
 }
 impl crate::IntoBoxed for BlockState {
     type Boxed = crate::ton::lite_server::BlockState;
+
     fn into_boxed(self) -> crate::ton::lite_server::BlockState {
         crate::ton::lite_server::BlockState::LiteServer_BlockState(self)
     }

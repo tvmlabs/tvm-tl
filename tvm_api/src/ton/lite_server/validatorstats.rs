@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Default, Clone, PartialEq)]
 #[doc = "TL-derived from `liteServer.validatorStats`\n\n```text\nliteServer.validatorStats mode:# id:tonNode.blockIdExt count:int complete:Bool state_proof:bytes data_proof:bytes = liteServer.ValidatorStats;\n```\n"]
 pub struct ValidatorStats {
@@ -14,15 +15,9 @@ impl crate::BareSerialize for ValidatorStats {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0xb9f796d8)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let ValidatorStats {
-            mode,
-            id,
-            count,
-            complete,
-            state_proof,
-            data_proof,
-        } = self;
+        let ValidatorStats { mode, id, count, complete, state_proof, data_proof } = self;
         _ser.write_bare::<crate::ton::int>(mode)?;
         _ser.write_bare::<crate::ton::ton_node::blockidext::BlockIdExt>(id)?;
         _ser.write_bare::<crate::ton::int>(count)?;
@@ -41,19 +36,13 @@ impl crate::BareDeserialize for ValidatorStats {
             let complete = _de.read_boxed::<crate::ton::Bool>()?;
             let state_proof = _de.read_bare::<crate::ton::bytes>()?;
             let data_proof = _de.read_bare::<crate::ton::bytes>()?;
-            Ok(Self {
-                mode,
-                id,
-                count,
-                complete,
-                state_proof,
-                data_proof,
-            })
+            Ok(Self { mode, id, count, complete, state_proof, data_proof })
         }
     }
 }
 impl crate::IntoBoxed for ValidatorStats {
     type Boxed = crate::ton::lite_server::ValidatorStats;
+
     fn into_boxed(self) -> crate::ton::lite_server::ValidatorStats {
         crate::ton::lite_server::ValidatorStats::LiteServer_ValidatorStats(self)
     }

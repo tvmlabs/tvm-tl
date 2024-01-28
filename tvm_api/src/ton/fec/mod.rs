@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Clone, PartialEq)]
 #[doc = "TL-derived from `fec.Type`\n\n```text\nfec.online data_size:int symbol_size:int symbols_count:int = fec.Type;\n\nfec.raptorQ data_size:int symbol_size:int symbols_count:int = fec.Type;\n\nfec.roundRobin data_size:int symbol_size:int symbols_count:int = fec.Type;\n```\n"]
 pub enum Type {
@@ -14,6 +15,7 @@ impl Type {
             Type::Fec_RoundRobin(ref x) => &x.data_size,
         }
     }
+
     pub fn symbol_size(&self) -> &crate::ton::int {
         match self {
             Type::Fec_Online(ref x) => &x.symbol_size,
@@ -21,6 +23,7 @@ impl Type {
             Type::Fec_RoundRobin(ref x) => &x.symbol_size,
         }
     }
+
     pub fn symbols_count(&self) -> &crate::ton::int {
         match self {
             Type::Fec_Online(ref x) => &x.symbols_count,
@@ -52,20 +55,21 @@ impl crate::BoxedDeserialize for Type {
             crate::ConstructorNumber(0x32f528e4),
         ]
     }
+
     fn deserialize_boxed(
         _id: crate::ConstructorNumber,
         _de: &mut crate::Deserializer,
     ) -> crate::Result<Self> {
         match _id {
-            crate::ConstructorNumber(0x0127660c) => Ok(Type::Fec_Online(
-                _de.read_bare::<crate::ton::fec::type_::Online>()?,
-            )),
-            crate::ConstructorNumber(0x8b93a7e0) => Ok(Type::Fec_RaptorQ(
-                _de.read_bare::<crate::ton::fec::type_::RaptorQ>()?,
-            )),
-            crate::ConstructorNumber(0x32f528e4) => Ok(Type::Fec_RoundRobin(
-                _de.read_bare::<crate::ton::fec::type_::RoundRobin>()?,
-            )),
+            crate::ConstructorNumber(0x0127660c) => {
+                Ok(Type::Fec_Online(_de.read_bare::<crate::ton::fec::type_::Online>()?))
+            }
+            crate::ConstructorNumber(0x8b93a7e0) => {
+                Ok(Type::Fec_RaptorQ(_de.read_bare::<crate::ton::fec::type_::RaptorQ>()?))
+            }
+            crate::ConstructorNumber(0x32f528e4) => {
+                Ok(Type::Fec_RoundRobin(_de.read_bare::<crate::ton::fec::type_::RoundRobin>()?))
+            }
             id => _invalid_id!(id),
         }
     }

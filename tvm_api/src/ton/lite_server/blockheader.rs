@@ -1,4 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 #[derive(Debug, Default, Clone, PartialEq)]
 #[doc = "TL-derived from `liteServer.blockHeader`\n\n```text\nliteServer.blockHeader id:tonNode.blockIdExt mode:# header_proof:bytes = liteServer.BlockHeader;\n```\n"]
 pub struct BlockHeader {
@@ -11,12 +12,9 @@ impl crate::BareSerialize for BlockHeader {
     fn constructor(&self) -> crate::ConstructorNumber {
         crate::ConstructorNumber(0x752d8219)
     }
+
     fn serialize_bare(&self, _ser: &mut crate::Serializer) -> crate::Result<()> {
-        let BlockHeader {
-            id,
-            mode,
-            header_proof,
-        } = self;
+        let BlockHeader { id, mode, header_proof } = self;
         _ser.write_bare::<crate::ton::ton_node::blockidext::BlockIdExt>(id)?;
         _ser.write_bare::<crate::ton::int>(mode)?;
         _ser.write_bare::<crate::ton::bytes>(header_proof)?;
@@ -29,16 +27,13 @@ impl crate::BareDeserialize for BlockHeader {
             let id = _de.read_bare::<crate::ton::ton_node::blockidext::BlockIdExt>()?;
             let mode = _de.read_bare::<crate::ton::int>()?;
             let header_proof = _de.read_bare::<crate::ton::bytes>()?;
-            Ok(Self {
-                id,
-                mode,
-                header_proof,
-            })
+            Ok(Self { id, mode, header_proof })
         }
     }
 }
 impl crate::IntoBoxed for BlockHeader {
     type Boxed = crate::ton::lite_server::BlockHeader;
+
     fn into_boxed(self) -> crate::ton::lite_server::BlockHeader {
         crate::ton::lite_server::BlockHeader::LiteServer_BlockHeader(self)
     }

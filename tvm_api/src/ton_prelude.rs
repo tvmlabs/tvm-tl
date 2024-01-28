@@ -1,35 +1,43 @@
-/*
-* Copyright (C) 2019-2023 EverX. All Rights Reserved.
-*
-* Licensed under the SOFTWARE EVALUATION License (the "License"); you may not use
-* this file except in compliance with the License.
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific TON DEV software governing permissions and
-* limitations under the License.
-*/
+// Copyright (C) 2019-2023 EverX. All Rights Reserved.
+//
+// Licensed under the SOFTWARE EVALUATION License (the "License"); you may not
+// use this file except in compliance with the License.
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific TON DEV software governing permissions and
+// limitations under the License.
 
 #![allow(non_camel_case_types)]
 
-use crate::{
-    ton::Bool, AnyBoxedSerialize, BareDeserialize, BareSerialize, BoxedDeserialize, BoxedSerialize,
-    ConstructorNumber, Deserializer, Result, Serializer,
-};
+use std::any::type_name;
+use std::fmt;
+use std::hash::Hash;
+use std::hash::Hasher;
+use std::io::Read;
+use std::io::Write;
+use std::marker::PhantomData;
 
-use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
+use byteorder::LittleEndian;
+use byteorder::ReadBytesExt;
+use byteorder::WriteBytesExt;
 use extfmt::Hexlify;
 use ordered_float::OrderedFloat;
-use serde_derive::{Deserialize, Serialize};
-use std::{
-    any::type_name,
-    fmt,
-    hash::{Hash, Hasher},
-    io::{Read, Write},
-    marker::PhantomData,
-};
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 use tvm_types::error;
+
+use crate::ton::Bool;
+use crate::AnyBoxedSerialize;
+use crate::BareDeserialize;
+use crate::BareSerialize;
+use crate::BoxedDeserialize;
+use crate::BoxedSerialize;
+use crate::ConstructorNumber;
+use crate::Deserializer;
+use crate::Result;
+use crate::Serializer;
 
 const MAX_BYTES_DEBUG_LEN: usize = 4;
 
@@ -89,6 +97,7 @@ impl BareSerialize for bytes {
     fn constructor(&self) -> crate::ConstructorNumber {
         unreachable!()
     }
+
     fn serialize_bare(&self, ser: &mut Serializer) -> Result<()> {
         ser.write_bare::<[u8]>(self)
     }
@@ -113,6 +122,7 @@ impl BareSerialize for bytes {
     fn constructor(&self) -> crate::ConstructorNumber {
         unreachable!()
     }
+
     fn serialize_bare(&self, ser: &mut Serializer) -> Result<()> {
         ser.write_bare::<[u8]>(&self.0)
     }
@@ -144,8 +154,9 @@ impl AsRef<[u8]> for bytes {
 pub struct int128(pub [u8; 16]);
 
 /// Represents 256-bit unsigned integer.
-//#[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, Hash)]
-//pub struct int256(pub [u8; 32]);
+//#[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Serialize,
+//#[derive(Clone, Deserialize, Hash)]
+// pub struct int256(pub [u8; 32]);
 pub(crate) type int256 = tvm_types::UInt256;
 
 /// Represents 512-bit unsigned integer.
@@ -161,7 +172,7 @@ impl Default for int512 {
 #[cfg(not(feature = "bytes_as_vec"))]
 impl_byteslike!(@common bytes);
 impl_byteslike!(@arraylike int128);
-//impl_byteslike!(@arraylike int256);
+// impl_byteslike!(@arraylike int256);
 impl_byteslike!(@arraylike int512);
 
 /// Represents base TL-object type.
@@ -264,6 +275,7 @@ where
         let inner = self.0.boxed_serialized_bytes().unwrap_or_default();
         crate::ConstructorNumber(inner.len() as u32)
     }
+
     fn serialize_bare(&self, ser: &mut Serializer) -> Result<()> {
         let inner = self.0.boxed_serialized_bytes()?;
         ser.write_i32::<LittleEndian>(inner.len() as i32)?;
@@ -276,6 +288,7 @@ impl BareSerialize for () {
     fn constructor(&self) -> crate::ConstructorNumber {
         unreachable!()
     }
+
     fn serialize_bare(&self, _ser: &mut Serializer) -> Result<()> {
         Ok(())
     }
@@ -283,11 +296,7 @@ impl BareSerialize for () {
 
 impl From<bool> for &'static Bool {
     fn from(b: bool) -> Self {
-        if b {
-            &Bool::BoolTrue
-        } else {
-            &Bool::BoolFalse
-        }
+        if b { &Bool::BoolTrue } else { &Bool::BoolFalse }
     }
 }
 
@@ -335,6 +344,7 @@ impl BareSerialize for String {
     fn constructor(&self) -> crate::ConstructorNumber {
         unreachable!()
     }
+
     fn serialize_bare(&self, ser: &mut Serializer) -> Result<()> {
         ser.write_bare::<[u8]>(self.as_bytes())?;
         Ok(())
@@ -411,6 +421,7 @@ macro_rules! impl_vector {
 
         impl<T> ::std::ops::Deref for Vector<$det, T> {
             type Target = [T];
+
             fn deref(&self) -> &[T] {
                 &self.0
             }
@@ -430,12 +441,7 @@ macro_rules! impl_vector {
                 let count = de.read_i32::<LittleEndian>()?;
                 let mut ret = Vec::new();
                 ret.try_reserve_exact(count as usize).map_err(|e| {
-                    error!(
-                        "count {} is too big for {}: {}",
-                        count,
-                        type_name::<Self>(),
-                        e
-                    )
+                    error!("count {} is too big for {}: {}", count, type_name::<Self>(), e)
                 })?;
                 for _ in 0..count {
                     ret.push(de.$read_method()?);
@@ -465,6 +471,7 @@ macro_rules! impl_vector {
             fn constructor(&self) -> crate::ConstructorNumber {
                 VECTOR_CONSTRUCTOR
             }
+
             fn serialize_bare(&self, ser: &mut Serializer) -> Result<()> {
                 ser.write_i32::<LittleEndian>(self.0.len() as i32)?;
                 for item in &self.0 {
@@ -498,14 +505,8 @@ impl BareDeserialize for Vec<u8> {
         };
 
         let mut buf = Vec::new();
-        buf.try_reserve_exact(len).map_err(|e| {
-            error!(
-                "count {} is too big for {}: {}",
-                len,
-                type_name::<Self>(),
-                e
-            )
-        })?;
+        buf.try_reserve_exact(len)
+            .map_err(|e| error!("count {} is too big for {}: {}", len, type_name::<Self>(), e))?;
         buf.resize(len, 0);
         de.read_exact(&mut buf)?;
         have_read += len;
@@ -522,6 +523,7 @@ impl BareSerialize for [u8] {
     fn constructor(&self) -> crate::ConstructorNumber {
         unreachable!()
     }
+
     fn serialize_bare(&self, ser: &mut Serializer) -> Result<()> {
         let len = self.len();
         let mut have_written = if len < 254 {
@@ -558,6 +560,7 @@ macro_rules! impl_tl_primitive {
             fn constructor(&self) -> crate::ConstructorNumber {
                 unreachable!()
             }
+
             fn serialize_bare(&self, ser: &mut Serializer) -> Result<()> {
                 ser.$write::<LittleEndian>(*self)?;
                 Ok(())
@@ -580,6 +583,7 @@ macro_rules! impl_tl_primitive_byte {
             fn constructor(&self) -> crate::ConstructorNumber {
                 unreachable!()
             }
+
             fn serialize_bare(&self, ser: &mut Serializer) -> Result<()> {
                 ser.$write(*self)?;
                 Ok(())
@@ -606,6 +610,7 @@ impl BareSerialize for double {
     fn constructor(&self) -> crate::ConstructorNumber {
         unreachable!()
     }
+
     fn serialize_bare(&self, ser: &mut Serializer) -> Result<()> {
         ser.write_f64::<LittleEndian>(self.0)?;
         Ok(())

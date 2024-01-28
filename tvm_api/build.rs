@@ -1,22 +1,21 @@
-/*
-* Copyright (C) 2019-2022 TON Labs. All Rights Reserved.
-*
-* Licensed under the SOFTWARE EVALUATION License (the "License"); you may not use
-* this file except in compliance with the License.
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific TON DEV software governing permissions and
-* limitations under the License.
-*/
+// Copyright (C) 2019-2022 TON Labs. All Rights Reserved.
+//
+// Licensed under the SOFTWARE EVALUATION License (the "License"); you may not
+// use this file except in compliance with the License.
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific TON DEV software governing permissions and
+// limitations under the License.
 
+use std::fs;
 use std::io::Read;
+use std::path;
 use std::path::Path;
-use std::{fs, path};
-use tvm_tl_codegen::Config;
-
 use std::process::Command;
+
+use tvm_tl_codegen::Config;
 
 fn get_value(cmd: &str, args: &[&str]) -> String {
     if let Ok(result) = Command::new(cmd).args(args).output() {
@@ -31,8 +30,8 @@ const OUTPUT_DIR: &str = "src/ton";
 const TL_DIR: &str = "tl";
 
 fn main() {
-    // TODO: This line was commented because of different behavior of cargo in rust ver 1.50.
-    //       We can revert it, when this behavior is fixed.
+    // TODO: This line was commented because of different behavior of cargo in rust
+    // ver 1.50.       We can revert it, when this behavior is fixed.
     // println!("cargo:rerun-if-changed={}", OUTPUT_DIR);
     println!("cargo:rerun-if-changed={}", TL_DIR);
     println!("cargo:rerun-if-changed=../tvm_tl_codegen");
@@ -54,10 +53,7 @@ fn main() {
         }
         fs::File::open(&file)
             .unwrap_or_else(|_| {
-                panic!(
-                    "Unable to open file for reading: {}",
-                    file.to_string_lossy()
-                )
+                panic!("Unable to open file for reading: {}", file.to_string_lossy())
             })
             .read_to_string(&mut input)
             .unwrap_or_else(|_| panic!("Unable to read file contents: {}", file.to_string_lossy()));
@@ -69,23 +65,14 @@ fn main() {
         let mut config_string = String::new();
         fs::File::open(&config_path)
             .unwrap_or_else(|_| {
-                panic!(
-                    "Unable to open file for reading: {}",
-                    config_path.to_string_lossy()
-                )
+                panic!("Unable to open file for reading: {}", config_path.to_string_lossy())
             })
             .read_to_string(&mut config_string)
             .unwrap_or_else(|_| {
-                panic!(
-                    "Unable to read file contents: {}",
-                    config_path.to_string_lossy()
-                )
+                panic!("Unable to read file contents: {}", config_path.to_string_lossy())
             });
         Some(serde_json::from_str(&config_string).unwrap_or_else(|_| {
-            panic!(
-                "Unable to parse file as JSON: {}",
-                config_path.to_string_lossy()
-            )
+            panic!("Unable to parse file as JSON: {}", config_path.to_string_lossy())
         }))
     } else {
         None
