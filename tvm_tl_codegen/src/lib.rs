@@ -693,7 +693,7 @@ impl AllConstructors {
                     Delimiter::Types => {
                         let vec = &mut constructors_tree
                             .entry(constructor.output.owned_names_vec())
-                            .or_insert_with(Default::default)
+                            .or_default()
                             .0;
                         let cons = Matched(constructor, text);
                         if let Err(index) = vec.binary_search(&cons) {
@@ -1895,9 +1895,9 @@ impl Constructors<TypeIR, FieldIR> {
                     continue;
                 }
                 map.entry(&field.name)
-                    .or_insert_with(Default::default)
+                    .or_default()
                     .entry(&field.ty)
-                    .or_insert_with(Default::default)
+                    .or_default()
                     .insert(cons);
             }
         }
