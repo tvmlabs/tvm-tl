@@ -210,7 +210,8 @@ pub mod parser {
 
     impl PartialOrd for Matched<Constructor<Type, Field>> {
         fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-            PartialOrd::partial_cmp(&self.1, &other.1)
+            Some(self.cmp(other))
+            // PartialOrd::partial_cmp(&self.1, &other.1)
         }
     }
 
@@ -825,7 +826,7 @@ impl Eq for TypeName {}
 
 impl PartialOrd for TypeName {
     fn partial_cmp(&self, other: &Self) -> Option<::std::cmp::Ordering> {
-        self.tokens_canon.partial_cmp(&other.tokens_canon)
+        Some(self.cmp(other))
     }
 }
 
